@@ -8,15 +8,15 @@ T = TypeVar('T', bound='Node')
 
 
 # Node creation
-class Node():
+class Node:
 
-    def __init__(self: T, key: int) -> None:
+    def __init__(self: T, key: int, value=None) -> None:
         self._key = key
         self.parent = None
         self.left = None
         self.right = None
         self._color = 1
-        self.value = None
+        self.value = value
 
     def __repr__(self: T) -> str:
         return "Key: " + str(self._key) + " Value: " + str(self.value)
@@ -103,6 +103,22 @@ class RedBlackTree():
 
     def postorder(self: T) -> list:
         return self.post_order_helper(self.root)
+
+    def find_closest_greater(self, target_key):
+        closest_node = None
+        current_node = self.root
+
+        while current_node is not self.TNULL:
+            if current_node.get_key() == target_key:
+                return current_node  # Found an exact match
+
+            elif current_node.get_key() > target_key:
+                closest_node = current_node  # Update closest node
+                current_node = current_node.left  # Move to the left subtree to find potentially closer values
+            else:
+                current_node = current_node.right  # Move to the right subtree
+
+        return closest_node  # Return the closest node found, or None if no larger key exists
 
     def pre_order_helper(self: T, node: Node) -> list:
         """

@@ -210,6 +210,7 @@ def test_preorder() -> None:
     bst.set_iteration_style("pre")
     for node in bst:
         keys.append(str(node.get_key()))
+    print(f"{keys = }")
     assert " ".join(keys) == "2 1 3"
 
 
@@ -229,6 +230,7 @@ def test_inorder() -> None:
     bst.set_iteration_style("in")
     for node in bst:
         keys.append(str(node.get_key()))
+    print(f"{keys = }")
     assert " ".join(keys) == "1 2 3"
 
 
@@ -248,6 +250,7 @@ def test_postorder() -> None:
     bst.set_iteration_style("post")
     for node in bst:
         keys.append(str(node.get_key()))
+    print(f"{keys = }")
     assert " ".join(keys) == "1 3 2"
 
 
@@ -274,6 +277,56 @@ def test_print() -> None:
     bst.insert(42)
 
     bst.print_tree()
+
+
+def test_print_by_KWK() -> None:
+    bst = RedBlackTree()
+    bst.insert(73)
+    print(bst.get_root())
+    bst.insert(48)
+    bst.insert(100)
+    bst.insert(42)
+    bst.insert(55)
+    bst.insert(40)
+    bst.insert(58)
+    bst.insert(42)
+    bst.insert(55)
+    bst.insert(40)
+    bst.insert(58)
+    bst.insert(42)
+
+    bst.print_tree()
+
+    nodes = bst.inorder()
+    keys = []
+    for node in nodes:
+        keys.append(str(node.get_key()))
+    print(" ".join(keys))
+
+
+def test_find_closest_greater_KWK() -> None:
+    bst = RedBlackTree()
+    bst.insert(73)
+    print(bst.get_root())
+    bst.insert(48)
+    bst.insert(100)
+    bst.insert(42)
+    bst.insert(55)
+    bst.insert(40)
+    bst.insert(58)
+    bst.insert(42)
+    bst.insert(55)
+    bst.insert(40)
+    bst.insert(58)
+    bst.insert(42)
+
+    bst.print_tree()
+    most_bigger_closest = bst.find_closest_greater(41)
+    if most_bigger_closest is None:
+        print("can't find bigger close value")
+    else:
+        print("most_bigger_closest is :")
+        print(most_bigger_closest)
 
 
 def test_elaborate_delete() -> None:
