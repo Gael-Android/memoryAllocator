@@ -399,8 +399,8 @@ class RedBlackTree():
         y.right = x
         x.parent = y
 
-    def insert(self: T, key: int) -> None:
-        node = Node(key)
+    def insert(self: T, key: int, value=None) -> None:
+        node = Node(key, value)
         node.left = self.TNULL
         node.right = self.TNULL
         node.set_color("red")
