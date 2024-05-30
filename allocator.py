@@ -1,7 +1,11 @@
+from freeSpace.freeSpaceManager import FreeSpaceManager
+
 
 class Allocator:
     def __init__(self):
         self.chunk_size = 4096
+        self.freeSpaceManager = FreeSpaceManager(self.chunk_size)
+        self.arena = []
 
     def print_stats(self):
         print("Arena: XX MB")
@@ -9,7 +13,7 @@ class Allocator:
         print("Utilization: 0.XX")
 
     def malloc(self, id, size):
-        pass
+        self.freeSpaceManager.allocate(id, size)
 
     def free(self, id):
         pass
