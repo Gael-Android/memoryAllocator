@@ -9,8 +9,8 @@ class MemoryVisualizer:
         self.camera = Camera(self.fig)
 
     def make_gif(self):
-        animation = self.camera.animate(interval=50, blit=True)
-        animation.save('my.gif')
+        animation = self.camera.animate(interval=1000)
+        animation.save('anime.gif', fps=5)
 
     def visualize(self, data):
         blocks = []
@@ -21,18 +21,13 @@ class MemoryVisualizer:
         # Extract data for plotting
         ids = [block[0] for block in blocks]
         starts = [block[1] for block in blocks]
-        ends = [block[2] for block in blocks]
         sizes = [block[3] for block in blocks]
 
         # Create color list
         colors = ['gray' if id == -1 else 'skyblue' for id in ids]
 
-        # Create the plot
-        fig = plt.figure(figsize=(12, 6))
-        camera = Camera(fig)
-
         # Horizontal bars (block ranges)
-        plt.barh(ids, sizes, left=starts, align='center', height=0.8, color=colors)
+        plt.barh(ids, sizes, left=starts, align='center', height=0.8, color=colors, edgecolor='black')
 
         # Add text labels with sizes (optional)
         for i, size in enumerate(sizes):
@@ -45,5 +40,5 @@ class MemoryVisualizer:
         plt.title('Block Visualization')
         plt.grid(axis='x')
 
-        plt.show()
-        camera.snap()
+        # plt.show()
+        self.camera.snap()

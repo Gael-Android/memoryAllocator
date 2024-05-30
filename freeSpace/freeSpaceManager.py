@@ -4,12 +4,17 @@ from rb.rbtree import RedBlackTree, Node
 
 class FreeSpaceManager:
     def __init__(self, chunk_size: int):
+        self.current_chunk_size = chunk_size
         self.rbtree = RedBlackTree()
         self.rbtree.insert(chunk_size, Block(-1, 0, chunk_size - 1, chunk_size))
 
     def insert(self, block: Block):
         print(f"FreeSpace :: inserting block : {block}")
         self.rbtree.insert(block.size, block)
+
+    def new_chunk(self, chunk_size: int):
+        self.rbtree.insert(chunk_size,
+                           Block(-1, self.current_chunk_size, self.current_chunk_size + chunk_size - 1, chunk_size))
 
     def allocate(self, id: int, size: int):
         # 가장 딱 맞는 노드를 찾는다
