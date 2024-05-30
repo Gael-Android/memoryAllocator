@@ -20,4 +20,4 @@ def test_print() -> None:
     fm.allocate(11, 58)
     fm.allocate(12, 42)
 
-    fm.rbtree.print_tree()
+    fm.visualize()

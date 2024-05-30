@@ -4,6 +4,8 @@
 import sys
 from typing import Type, TypeVar, Iterator
 
+from block import Block
+
 T = TypeVar('T', bound='Node')
 
 
@@ -228,10 +230,12 @@ class RedBlackTree():
         v.parent = u.parent
 
     # Node deletion
-    def delete_node_helper(self: T, node: Node, key: int) -> None:
+    def delete_node_helper(self: T, node: Node, key: int) -> Block:
+        free_block = None
         z = self.TNULL
         while not node.is_null():
             if node.get_key() == key:
+                free_block = node.value
                 z = node
 
             if node.get_key() <= key:
@@ -272,6 +276,7 @@ class RedBlackTree():
             self.delete_fix(x)
 
         self.size -= 1
+        return free_block
 
     # Balance the tree after insertion
     def fix_insert(self: T, node: Node) -> None:

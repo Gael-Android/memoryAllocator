@@ -1,3 +1,4 @@
+from arena.arenaManager import ArenaManager
 from freeSpace.freeSpaceManager import FreeSpaceManager
 
 
@@ -5,9 +6,10 @@ class Allocator:
     def __init__(self):
         self.chunk_size = 4096
         self.freeSpaceManager = FreeSpaceManager(self.chunk_size)
-        self.arena = []
+        self.arena = ArenaManager()
 
     def print_stats(self):
+        self.freeSpaceManager.visualize()
         print("Arena: XX MB")
         print("In-use: XX MB")
         print("Utilization: 0.XX")
@@ -31,12 +33,12 @@ if __name__ == "__main__":
             # print(line)
             req = line.split()
             if req[0] == 'a':
-                # allocator.malloc(int(req[1]), int(req[2]))
                 a_counter += 1
                 naive_total_memory_alloc += int(req[2])
+                allocator.malloc(int(req[1]), int(req[2]))
             elif req[0] == 'f':
-                # allocator.free(int(req[1]))
                 f_counter += 1
+                # allocator.free(int(req[1]))
 
             # if n%100 == 0:
             #     print(n, "...")
