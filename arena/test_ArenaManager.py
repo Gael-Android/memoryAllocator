@@ -10,4 +10,4 @@ def test_print() -> None:
     am.insert(Block(3, 221, 321, 100))
 
     print()
-    am.visualize()
+    am.to_list()

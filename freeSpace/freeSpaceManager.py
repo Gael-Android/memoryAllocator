@@ -29,8 +29,8 @@ class FreeSpaceManager:
         # 블럭이 딱 맞는 경우 -> 그냥 할당
         if original_block.get_key() == wanted_size:
             print("Allocated perfect!")
-            self.rbtree.delete(original_block.get_key())
-            return original_block
+            new_block = self.rbtree.delete(original_block.get_key())
+            return new_block
         else:
             # 블럭을 나누고 나머지를 다시 트리에 넣는다. -> 원하는 크기를 가진 블럭을 return
             print("splitting!")
@@ -46,6 +46,5 @@ class FreeSpaceManager:
             self.rbtree.insert(rest_block.size, rest_block)
             return new_block
 
-    def visualize(self):
-        print()
-        self.rbtree.print_tree()
+    def to_list(self):
+        return self.rbtree.inorder()

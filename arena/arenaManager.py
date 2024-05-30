@@ -11,9 +11,10 @@ class ArenaManager:
         self.rbtree.insert(block.id, block)
 
     def free(self, id: int):
-        print(f"Arena :: freeing block : {id}")
-        return self.rbtree.delete(id)
+        print(f"Arena :: freeing block id : {id}")
+        free_block = self.rbtree.delete(id)
+        print(f"Arena :: free block : {free_block}")
+        return free_block
 
-    def visualize(self):
-        print()
-        self.rbtree.print_tree()
+    def to_list(self):
+        return self.rbtree.inorder()

@@ -234,8 +234,10 @@ class RedBlackTree():
         free_block = None
         z = self.TNULL
         while not node.is_null():
+            print(f"delete searching... {node.get_key()}")
             if node.get_key() == key:
-                free_block = node.value
+                print(f"delete find! {node.get_key()}")
+                free_block = Block(-1, node.value.start_address, node.value.end_address, node.value.size)
                 z = node
 
             if node.get_key() <= key:
@@ -439,8 +441,8 @@ class RedBlackTree():
 
         self.fix_insert(node)
 
-    def delete(self: T, key: int) -> None:
-        self.delete_node_helper(self.root, key)
+    def delete(self: T, key: int) -> Block:
+        return self.delete_node_helper(self.root, key)
 
     def print_tree(self: T) -> None:
         self.__print_helper(self.root, "", True)

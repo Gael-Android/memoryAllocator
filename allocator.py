@@ -1,5 +1,6 @@
 from arena.arenaManager import ArenaManager
 from freeSpace.freeSpaceManager import FreeSpaceManager
+from memory_visualizer import MemoryVisualizer
 
 
 class Allocator:
@@ -9,16 +10,27 @@ class Allocator:
         self.arena = ArenaManager()
 
     def print_stats(self):
-        self.freeSpaceManager.visualize()
+        self.freeSpaceManager.to_list()
         print("Arena: XX MB")
         print("In-use: XX MB")
         print("Utilization: 0.XX")
 
     def malloc(self, id, size):
-        self.freeSpaceManager.allocate(id, size)
+        block = self.freeSpaceManager.allocate(id, size)
+        if block is not None:
+            print("malloc block: ", block)
+            self.arena.insert(block)
+        else:
+            quit()
 
     def free(self, id):
-        pass
+        block = self.arena.free(id)
+        if block is not None:
+            print("free block: ", block)
+            self.freeSpaceManager.insert(block)
+
+    def return_call_data(self):
+        return self.freeSpaceManager.to_list() + self.arena.to_list()
 
 
 if __name__ == "__main__":
@@ -26,6 +38,8 @@ if __name__ == "__main__":
     a_counter = 0
     f_counter = 0
     naive_total_memory_alloc = 0
+    memory_visualizer = MemoryVisualizer()
+    memory_visualizer.visualize(allocator.return_call_data())
 
     with open("./input.txt", "r") as file:
         n = 0
@@ -38,11 +52,12 @@ if __name__ == "__main__":
                 allocator.malloc(int(req[1]), int(req[2]))
             elif req[0] == 'f':
                 f_counter += 1
-                # allocator.free(int(req[1]))
+                allocator.free(int(req[1]))
 
             # if n%100 == 0:
             #     print(n, "...")
 
+            memory_visualizer.visualize(allocator.return_call_data())
             n += 1
 
     print("a_counter: ", a_counter)
@@ -51,3 +66,4 @@ if __name__ == "__main__":
 
     print("total: ", a_counter + f_counter)
     allocator.print_stats()
+    memory_visualizer.make_gif()
