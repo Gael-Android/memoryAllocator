@@ -6,7 +6,7 @@ from memory_visualizer import MemoryVisualizer
 class Allocator:
     def __init__(self):
         # self.chunk_size = 4096
-        self.chunk_size = 80000
+        self.chunk_size = 40000
         self.freeSpaceManager = FreeSpaceManager(self.chunk_size)
         self.arena = ArenaManager()
 
@@ -21,6 +21,7 @@ class Allocator:
         if block is not None:
             print("malloc block: ", block)
             self.arena.insert(block)
+            return True
         else:
             return None
 
@@ -56,11 +57,14 @@ if __name__ == "__main__":
                 naive_total_memory_alloc += int(req[2])
                 if allocator.malloc(int(req[1]), int(req[2])) is None:
                     print("Memory allocation failed")
+                    print("new chunk load")
+                    allocator.new_chunk(allocator.chunk_size)
+                    # memory_visualizer.make_gif(str(n) + "_")
             elif req[0] == 'f':
                 f_counter += 1
                 allocator.free(int(req[1]))
 
-            if n == 50:
+            if n == 300:
                 break
 
             memory_visualizer.visualize(allocator.return_call_data())
@@ -73,4 +77,4 @@ if __name__ == "__main__":
 
     print("total call : ", a_counter + f_counter)
     allocator.print_stats()
-    memory_visualizer.make_gif()
+    memory_visualizer.make_gif("the_end_")

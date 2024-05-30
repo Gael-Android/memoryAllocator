@@ -15,6 +15,7 @@ class FreeSpaceManager:
     def new_chunk(self, chunk_size: int):
         self.rbtree.insert(chunk_size,
                            Block(-1, self.current_chunk_size, self.current_chunk_size + chunk_size - 1, chunk_size))
+        self.current_chunk_size += chunk_size
 
     def allocate(self, id: int, size: int):
         # 가장 딱 맞는 노드를 찾는다

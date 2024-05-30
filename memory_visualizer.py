@@ -8,9 +8,9 @@ class MemoryVisualizer:
         self.fig = plt.figure(figsize=(12, 6))
         self.camera = Camera(self.fig)
 
-    def make_gif(self):
+    def make_gif(self, subtitle=""):
         animation = self.camera.animate(interval=1000)
-        animation.save('anime.gif', fps=5)
+        animation.save(f"./animation/anime_{subtitle}_.mp4", fps=5)
 
     def visualize(self, data):
         blocks = []
