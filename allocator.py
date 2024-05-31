@@ -59,12 +59,12 @@ if __name__ == "__main__":
                     print("Memory allocation failed")
                     print("new chunk load")
                     allocator.new_chunk(allocator.chunk_size)
-                    # memory_visualizer.make_gif(str(n) + "_")
+                    allocator.malloc(int(req[1]), int(req[2]))
             elif req[0] == 'f':
                 f_counter += 1
                 allocator.free(int(req[1]))
 
-            if n == 300:
+            if n == 500:
                 break
 
             memory_visualizer.visualize(allocator.return_call_data())
@@ -77,4 +77,4 @@ if __name__ == "__main__":
 
     print("total call : ", a_counter + f_counter)
     allocator.print_stats()
-    memory_visualizer.make_gif("the_end_")
+    memory_visualizer.make_gif()

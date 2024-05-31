@@ -1,16 +1,44 @@
 import matplotlib.pyplot as plt
-from celluloid import Camera
+import os
+import subprocess
+import shutil  # For removing directories and their contents
+
+
+def clear_temp_images(image_dir="./temp_images"):
+    """Clears (or creates) the temporary image directory."""
+    if os.path.exists(image_dir):
+        shutil.rmtree(image_dir)  # Remove the entire directory
+    os.makedirs(image_dir)  # Create a fresh, empty directory
+
+
+def create_video_from_images(image_dir="./temp_images", output_filename="./animation/output.mp4", framerate=5):
+    """Creates an MP4 video from a sequence of images using ffmpeg."""
+
+    ffmpeg_cmd = [
+        "ffmpeg",
+        "-framerate", str(framerate),
+        "-i", os.path.join(image_dir, "frame_%d.jpg"),  # Use os.path.join for cross-platform paths
+        "-c:v", "libx264",
+        "-pix_fmt", "yuv420p",
+        output_filename
+    ]
+
+    try:
+        subprocess.run(ffmpeg_cmd, check=True)
+        print(f"Video created successfully: {output_filename}")
+        clear_temp_images()
+    except subprocess.CalledProcessError as e:
+        print(f"Error creating video: {e}")
 
 
 class MemoryVisualizer:
 
     def __init__(self):
+        self.img_idx = 0
         self.fig = plt.figure(figsize=(12, 6))
-        self.camera = Camera(self.fig)
 
-    def make_gif(self, subtitle=""):
-        animation = self.camera.animate(interval=1000)
-        animation.save(f"./animation/anime_{subtitle}_.mp4", fps=5)
+    def make_gif(self):
+        create_video_from_images()
 
     def visualize(self, data):
         blocks = []
@@ -41,4 +69,6 @@ class MemoryVisualizer:
         plt.grid(axis='x')
 
         # plt.show()
-        self.camera.snap()
+        plt.savefig(f"./temp_images/frame_{self.img_idx}.jpg")  # Save each frame as PNG
+        self.img_idx += 1
+        plt.clf()
