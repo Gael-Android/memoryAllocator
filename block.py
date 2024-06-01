@@ -6,4 +6,4 @@ class Block:
         self.size = size
 
     def __repr__(self):
-        return f"Block({self.id}, {self.start_address}, {self.end_address}, {self.size})"
+        return f"Block(id:{self.id}, start:{self.start_address}, end:{self.end_address}, size:{self.size})"

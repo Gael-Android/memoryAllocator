@@ -5,6 +5,7 @@ import sys
 from typing import Type, TypeVar, Iterator
 
 from block import Block
+import random
 
 T = TypeVar('T', bound='Node')
 
@@ -230,7 +231,7 @@ class RedBlackTree():
         v.parent = u.parent
 
     # Node deletion
-    def delete_node_helper(self: T, node: Node, key: int) -> Block:
+    def delete_node_helper(self: T, node: Node, key: int):
         free_block = None
         z = self.TNULL
         while not node.is_null():
@@ -246,8 +247,8 @@ class RedBlackTree():
                 node = node.left
 
         if z.is_null():
-            # print("Cannot find key in the tree")
-            return
+            print("Cannot find key in the tree")
+            return None
 
         y = z
         y_original_color = y.get_color()

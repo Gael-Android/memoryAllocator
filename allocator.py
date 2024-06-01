@@ -5,8 +5,7 @@ from memory_visualizer import MemoryVisualizer
 
 class Allocator:
     def __init__(self):
-        # self.chunk_size = 4096
-        self.chunk_size = 40000
+        self.chunk_size = 4096
         self.freeSpaceManager = FreeSpaceManager(self.chunk_size)
         self.arena = ArenaManager()
 
@@ -30,6 +29,8 @@ class Allocator:
         if block is not None:
             print("free block: ", block)
             self.freeSpaceManager.insert(block)
+        else:
+            print("Block not found")
 
     def new_chunk(self, chunk_size):
         self.freeSpaceManager.new_chunk(chunk_size)
@@ -50,21 +51,25 @@ if __name__ == "__main__":
         n = 0
         for line in file:
             print("EPOCH : ", n)
-            # print(line)
             req = line.split()
             if req[0] == 'a':
+                print("malloc request: ", req[1], req[2])
                 a_counter += 1
                 naive_total_memory_alloc += int(req[2])
                 if allocator.malloc(int(req[1]), int(req[2])) is None:
                     print("Memory allocation failed")
                     print("new chunk load")
                     allocator.new_chunk(allocator.chunk_size)
+                    print("retrying malloc...")
                     allocator.malloc(int(req[1]), int(req[2]))
             elif req[0] == 'f':
+                print("free request: ", req[1])
                 f_counter += 1
                 allocator.free(int(req[1]))
+            allocator.freeSpaceManager.rbtree.print_tree()
+            allocator.arena.rbtree.print_tree()
 
-            if n == 500:
+            if n == 30:
                 break
 
             memory_visualizer.visualize(allocator.return_call_data())
@@ -77,4 +82,4 @@ if __name__ == "__main__":
 
     print("total call : ", a_counter + f_counter)
     allocator.print_stats()
-    memory_visualizer.make_gif()
+    memory_visualizer.make_mp4()
