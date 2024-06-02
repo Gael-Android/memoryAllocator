@@ -1,3 +1,5 @@
+import multiprocessing
+
 from arena.arenaManager import ArenaManager
 import time
 from freeSpace.freeSpaceManager import FreeSpaceManager
@@ -6,9 +8,11 @@ from memory_visualizer import MemoryVisualizer
 
 class Allocator:
     def __init__(self):
-        self.chunk_size = 4096
+        self.chunk_option = 16
+        self.tree_count_option = 1
+        self.chunk_size = 1024 * self.chunk_option
         self.freeSpaceManager = FreeSpaceManager(self.chunk_size)
-        self.arena = ArenaManager()
+        self.arena = ArenaManager(self.tree_count_option)
 
     def print_stats(self):
         in_use_memory = 0
@@ -82,16 +86,23 @@ if __name__ == "__main__":
                 a_counter += 1
                 naive_total_memory_alloc += int(req[2])
                 if allocator.malloc(int(req[1]), int(req[2])) is None:
-                    # print("Memory allocation failed")
-                    # print("merge!!")
-                    allocator.merge()
+                    # print("new chunk load")
+                    allocator.new_chunk(allocator.chunk_size)
+                    chunk_load_counter += 1
+                    if chunk_load_counter % 50 == 0:
+                        allocator.merge()
                     # print("retrying malloc...")
-                    if allocator.malloc(int(req[1]), int(req[2])) is None:
-                        # print("new chunk load")
-                        allocator.new_chunk(allocator.chunk_size)
-                        chunk_load_counter += 1
-                        # print("retrying malloc...")
-                        allocator.malloc(int(req[1]), int(req[2]))
+                    allocator.malloc(int(req[1]), int(req[2]))
+                    # # print("Memory allocation failed")
+                    # # print("merge!!")
+                    # allocator.merge()
+                    # # print("retrying malloc...")
+                    # if allocator.malloc(int(req[1]), int(req[2])) is None:
+                    #     # print("new chunk load")
+                    #     allocator.new_chunk(allocator.chunk_size)
+                    #     chunk_load_counter += 1
+                    #     # print("retrying malloc...")
+                    #     allocator.malloc(int(req[1]), int(req[2]))
             elif req[0] == 'f':
                 # print("free request: ", req[1])
                 f_counter += 1
@@ -99,14 +110,19 @@ if __name__ == "__main__":
             # allocator.freeSpaceManager.rbtree.print_tree()
             # allocator.arena.rbtree.print_tree()
 
-            if n == 100:
-                break
+            # if n == 100:
+            #     break
 
             # memory_visualizer.visualize(allocator.return_call_data())
             n += 1
 
     end_time = time.time()  # 종료 시간 기록
     elapsed_time = end_time - start_time  # 경과 시간 계산
+
+    allocator.arena.shutdown()
+    print(len(allocator.arena.multi_rbtree))
+    for i in allocator.arena.multi_rbtree:
+        i.print_tree()
 
     print(f"Elapsed time: {elapsed_time : .3f} seconds")
 
@@ -118,4 +134,5 @@ if __name__ == "__main__":
     print("total call : ", a_counter + f_counter)
     print("chunk load counter: ", chunk_load_counter)
     allocator.print_stats()
+
     # memory_visualizer.make_mp4()
