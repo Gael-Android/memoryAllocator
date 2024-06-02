@@ -238,7 +238,7 @@ class RedBlackTree():
             # print(f"delete searching... {node.get_key()}")
             if node.get_key() == key:
                 # print(f"delete find! {node.get_key()}")
-                free_block = Block(-1, node.value.start_address, node.value.end_address, node.value.size)
+                free_block = node.value
                 z = node
 
             if node.get_key() <= key:

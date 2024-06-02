@@ -44,7 +44,6 @@ class MemoryVisualizer:
         blocks = []
         for i in data:
             blocks.append([i.value.id, i.value.start_address, i.value.end_address, i.value.size])
-        print(blocks)
 
         # Extract data for plotting
         ids = [block[0] for block in blocks]
