@@ -8,8 +8,8 @@ from memory_visualizer import MemoryVisualizer
 
 class Allocator:
     def __init__(self):
-        self.chunk_option = 16
-        self.tree_count_option = 1
+        self.chunk_option = 32
+        self.tree_count_option = 10000
         self.chunk_size = 1024 * self.chunk_option
         self.freeSpaceManager = FreeSpaceManager(self.chunk_size)
         self.arena = ArenaManager(self.tree_count_option)
