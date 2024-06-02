@@ -11,10 +11,15 @@ class Allocator:
         self.arena = ArenaManager()
 
     def print_stats(self):
-        self.freeSpaceManager.to_list()
-        print("Arena: XX MB")
-        print("In-use: XX MB")
-        print("Utilization: 0.XX")
+        in_use_memory = 0
+        free_memory = 0
+        for i in self.freeSpaceManager.to_list():
+            free_memory += i.value.size
+        for i in self.arena.to_list():
+            in_use_memory += i.value.size
+        print(f"free: {free_memory} MB")
+        print(f"In-use: {in_use_memory} MB")
+        print(f"공간활용률(사용공간/전체공간): {in_use_memory / (in_use_memory + free_memory) : .3f}")
 
     def malloc(self, id, size):
         block = self.freeSpaceManager.allocate(id, size)
@@ -62,6 +67,7 @@ if __name__ == "__main__":
     a_counter = 0
     f_counter = 0
     naive_total_memory_alloc = 0
+    chunk_load_counter = 0
     memory_visualizer = MemoryVisualizer()
     memory_visualizer.visualize(allocator.return_call_data())
 
@@ -83,6 +89,7 @@ if __name__ == "__main__":
                     if allocator.malloc(int(req[1]), int(req[2])) is None:
                         # print("new chunk load")
                         allocator.new_chunk(allocator.chunk_size)
+                        chunk_load_counter += 1
                         # print("retrying malloc...")
                         allocator.malloc(int(req[1]), int(req[2]))
             elif req[0] == 'f':
@@ -92,8 +99,8 @@ if __name__ == "__main__":
             # allocator.freeSpaceManager.rbtree.print_tree()
             # allocator.arena.rbtree.print_tree()
 
-            # if n == 100:
-            #     break
+            if n == 100:
+                break
 
             # memory_visualizer.visualize(allocator.return_call_data())
             n += 1
@@ -101,13 +108,14 @@ if __name__ == "__main__":
     end_time = time.time()  # 종료 시간 기록
     elapsed_time = end_time - start_time  # 경과 시간 계산
 
-    print(f"Elapsed time: {elapsed_time} seconds")
+    print(f"Elapsed time: {elapsed_time : .3f} seconds")
 
     print("a_counter: ", a_counter)
     print("f_counter: ", f_counter)
     print("total_memory_alloc: ", naive_total_memory_alloc)
-    print("average_memory_wanted: ", naive_total_memory_alloc / a_counter)
+    print(f"average_memory_wanted: {naive_total_memory_alloc / a_counter : .2f}")
 
     print("total call : ", a_counter + f_counter)
+    print("chunk load counter: ", chunk_load_counter)
     allocator.print_stats()
     # memory_visualizer.make_mp4()
