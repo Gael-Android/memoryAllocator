@@ -54,3 +54,10 @@ class FreeSpaceManager:
 
     def to_list(self):
         return self.rbtree.inorder()
+
+    def clear(self, new_start_address, new_merged_block_size):
+        print("clear", new_start_address, new_merged_block_size)
+        self.rbtree = RedBlackTree()
+        self.rbtree.insert(new_merged_block_size,
+                           Block(-1, new_start_address, new_start_address + new_merged_block_size,
+                                 new_merged_block_size))

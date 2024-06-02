@@ -35,7 +35,7 @@ class MemoryVisualizer:
 
     def __init__(self):
         self.img_idx = 0
-        self.fig = plt.figure(figsize=(12, 6))
+        self.fig = plt.figure(figsize=(15, 8))
 
     def make_mp4(self):
         create_video_from_images()
@@ -69,6 +69,6 @@ class MemoryVisualizer:
         plt.grid(axis='x')
 
         plt.savefig(f"./temp_images/frame_{self.img_idx}.jpg")  # Save each frame (plt.show() 보다 먼저 써야함)
-        plt.show()
+        # plt.show()
         self.img_idx += 1
         plt.clf()

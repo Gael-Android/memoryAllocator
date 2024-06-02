@@ -1,4 +1,5 @@
 from arena.arenaManager import ArenaManager
+from block import Block
 from freeSpace.freeSpaceManager import FreeSpaceManager
 from memory_visualizer import MemoryVisualizer
 
@@ -38,6 +39,22 @@ class Allocator:
     def return_call_data(self):
         return self.freeSpaceManager.to_list() + self.arena.to_list()
 
+    def merge(self):
+        left_shift_distance = 0
+        last_in_use_block_end_address = 0
+        for i in sorted(self.freeSpaceManager.to_list() + self.arena.to_list(), key=lambda x: x.value.start_address):
+            print("i: ", i)
+            if i.value.id == -1:  # free block
+                left_shift_distance += i.value.size
+                print("left_shift_distance: ", left_shift_distance)
+            else:  # in-use block
+                print("before : ", i.value.start_address, i.value.end_address)
+                i.value.start_address -= left_shift_distance
+                i.value.end_address -= left_shift_distance
+                print("after : ", i.value.start_address, i.value.end_address)
+                last_in_use_block_end_address = i.value.end_address
+        self.freeSpaceManager.clear(last_in_use_block_end_address + 1, left_shift_distance)
+
 
 if __name__ == "__main__":
     allocator = Allocator()
@@ -58,10 +75,14 @@ if __name__ == "__main__":
                 naive_total_memory_alloc += int(req[2])
                 if allocator.malloc(int(req[1]), int(req[2])) is None:
                     print("Memory allocation failed")
-                    print("new chunk load")
-                    allocator.new_chunk(allocator.chunk_size)
+                    print("merge!!")
+                    allocator.merge()
                     print("retrying malloc...")
-                    allocator.malloc(int(req[1]), int(req[2]))
+                    if allocator.malloc(int(req[1]), int(req[2])) is None:
+                        print("new chunk load")
+                        allocator.new_chunk(allocator.chunk_size)
+                        print("retrying malloc...")
+                        allocator.malloc(int(req[1]), int(req[2]))
             elif req[0] == 'f':
                 print("free request: ", req[1])
                 f_counter += 1
@@ -69,7 +90,7 @@ if __name__ == "__main__":
             allocator.freeSpaceManager.rbtree.print_tree()
             allocator.arena.rbtree.print_tree()
 
-            if n == 30:
+            if n == 100:
                 break
 
             memory_visualizer.visualize(allocator.return_call_data())
