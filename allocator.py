@@ -1,5 +1,5 @@
 from arena.arenaManager import ArenaManager
-from block import Block
+import time
 from freeSpace.freeSpaceManager import FreeSpaceManager
 from memory_visualizer import MemoryVisualizer
 
@@ -19,7 +19,7 @@ class Allocator:
     def malloc(self, id, size):
         block = self.freeSpaceManager.allocate(id, size)
         if block is not None:
-            print("malloc block: ", block)
+            # print("malloc block: ", block)
             self.arena.insert(block)
             return True
         else:
@@ -28,9 +28,10 @@ class Allocator:
     def free(self, id):
         block = self.arena.free(id)
         if block is not None:
-            print("free block: ", block)
+            # print("free block: ", block)
             self.freeSpaceManager.insert(block)
         else:
+            pass
             print("Block not found")
 
     def new_chunk(self, chunk_size):
@@ -43,15 +44,15 @@ class Allocator:
         left_shift_distance = 0
         last_in_use_block_end_address = 0
         for i in sorted(self.freeSpaceManager.to_list() + self.arena.to_list(), key=lambda x: x.value.start_address):
-            print("i: ", i)
+            # print("i: ", i)
             if i.value.id == -1:  # free block
                 left_shift_distance += i.value.size
-                print("left_shift_distance: ", left_shift_distance)
+                # print("left_shift_distance: ", left_shift_distance)
             else:  # in-use block
-                print("before : ", i.value.start_address, i.value.end_address)
+                # print("before : ", i.value.start_address, i.value.end_address)
                 i.value.start_address -= left_shift_distance
                 i.value.end_address -= left_shift_distance
-                print("after : ", i.value.start_address, i.value.end_address)
+                # print("after : ", i.value.start_address, i.value.end_address)
                 last_in_use_block_end_address = i.value.end_address
         self.freeSpaceManager.clear(last_in_use_block_end_address + 1, left_shift_distance)
 
@@ -64,37 +65,43 @@ if __name__ == "__main__":
     memory_visualizer = MemoryVisualizer()
     memory_visualizer.visualize(allocator.return_call_data())
 
+    start_time = time.time()  # 시작 시간 기록
     with open("./input.txt", "r") as file:
         n = 0
         for line in file:
             print("EPOCH : ", n)
             req = line.split()
             if req[0] == 'a':
-                print("malloc request: ", req[1], req[2])
+                # print("malloc request: ", req[1], req[2])
                 a_counter += 1
                 naive_total_memory_alloc += int(req[2])
                 if allocator.malloc(int(req[1]), int(req[2])) is None:
-                    print("Memory allocation failed")
-                    print("merge!!")
+                    # print("Memory allocation failed")
+                    # print("merge!!")
                     allocator.merge()
-                    print("retrying malloc...")
+                    # print("retrying malloc...")
                     if allocator.malloc(int(req[1]), int(req[2])) is None:
-                        print("new chunk load")
+                        # print("new chunk load")
                         allocator.new_chunk(allocator.chunk_size)
-                        print("retrying malloc...")
+                        # print("retrying malloc...")
                         allocator.malloc(int(req[1]), int(req[2]))
             elif req[0] == 'f':
-                print("free request: ", req[1])
+                # print("free request: ", req[1])
                 f_counter += 1
                 allocator.free(int(req[1]))
-            allocator.freeSpaceManager.rbtree.print_tree()
-            allocator.arena.rbtree.print_tree()
+            # allocator.freeSpaceManager.rbtree.print_tree()
+            # allocator.arena.rbtree.print_tree()
 
-            if n == 100:
-                break
+            # if n == 100:
+            #     break
 
-            memory_visualizer.visualize(allocator.return_call_data())
+            # memory_visualizer.visualize(allocator.return_call_data())
             n += 1
+
+    end_time = time.time()  # 종료 시간 기록
+    elapsed_time = end_time - start_time  # 경과 시간 계산
+
+    print(f"Elapsed time: {elapsed_time} seconds")
 
     print("a_counter: ", a_counter)
     print("f_counter: ", f_counter)
@@ -103,4 +110,4 @@ if __name__ == "__main__":
 
     print("total call : ", a_counter + f_counter)
     allocator.print_stats()
-    memory_visualizer.make_mp4()
+    # memory_visualizer.make_mp4()

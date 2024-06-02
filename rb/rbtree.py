@@ -235,9 +235,9 @@ class RedBlackTree():
         free_block = None
         z = self.TNULL
         while not node.is_null():
-            print(f"delete searching... {node.get_key()}")
+            # print(f"delete searching... {node.get_key()}")
             if node.get_key() == key:
-                print(f"delete find! {node.get_key()}")
+                # print(f"delete find! {node.get_key()}")
                 free_block = Block(-1, node.value.start_address, node.value.end_address, node.value.size)
                 z = node
 
